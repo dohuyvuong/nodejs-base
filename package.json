@@ -1,0 +1,49 @@
+{
+  "name": "nodejs_base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:clear": "rimraf ./dist",
+    "build": "npm run build:clear && npx tsc",
+    "build:watch": "npm run build:clear && npx tsc -w",
+    "start": "node ./dist/src/main.js",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "4.17.14",
+    "@types/node": "18.11.3",
+    "@types/signale": "1.4.4",
+    "@types/uuid": "8.3.4",
+    "@typescript-eslint/eslint-plugin": "5.40.1",
+    "@typescript-eslint/parser": "5.40.1",
+    "eslint": "8.25.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "husky": "8.0.1",
+    "lint-staged": "13.0.3",
+    "prettier": "2.7.1",
+    "rimraf": "3.0.2",
+    "typescript": "4.8.4"
+  },
+  "dependencies": {
+    "class-transformer": "0.5.1",
+    "class-validator": "0.13.2",
+    "express": "4.18.2",
+    "pg": "8.8.0",
+    "reflect-metadata": "0.1.13",
+    "signale": "1.4.0",
+    "typeorm": "0.3.10",
+    "uuid": "9.0.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write ."
+    ]
+  }
+}

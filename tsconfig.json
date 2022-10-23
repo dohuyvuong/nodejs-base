@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "noImplicitAny": true,
+    "noUnusedLocals": true
+  },
+  "include": ["src", "migrations"]
+}
