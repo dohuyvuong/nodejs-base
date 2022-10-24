@@ -1,5 +1,5 @@
-import { AppContext } from '../core/context/app-context';
-import { Logger } from '../core/logger/logger';
+import { AppContext } from '../../core/context/app-context';
+import { Logger } from '../../core/logger/logger';
 
 declare module 'http' {
   interface IncomingMessage {

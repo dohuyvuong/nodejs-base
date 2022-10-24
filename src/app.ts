@@ -1,13 +1,15 @@
 import express from 'express';
 
-import { exampleRouter } from './controllers/example.controller';
-import { context } from './core/middlewares/context.middleware';
-import { dispose } from './core/middlewares/dispose.middleware';
+import { apiRouter } from './api.router';
+import { disposeContext } from './core/middlewares/dispose-context.middleware';
+import { useContext } from './core/middlewares/use-context.middleware';
 
 const app = express();
 
-app.use(context());
-app.use(exampleRouter);
-app.use(dispose());
+app.use(useContext());
+
+app.use('/api', apiRouter);
+
+app.use(disposeContext());
 
 export { app };

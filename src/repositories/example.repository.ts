@@ -8,4 +8,9 @@ export class ExampleRepository {
     const queryRunner = await this._context.connection.getQueryRunner();
     return await queryRunner.manager.getRepository(ExampleEntity).find();
   }
+
+  public async findById(id: number): Promise<ExampleEntity | null> {
+    const queryRunner = await this._context.connection.getQueryRunner();
+    return await queryRunner.manager.getRepository(ExampleEntity).findOneBy({ id });
+  }
 }

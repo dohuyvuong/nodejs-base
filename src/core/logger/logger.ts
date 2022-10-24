@@ -28,7 +28,7 @@ export class Logger {
   private transformArgs(...args: unknown[]): string[] {
     return args.map((arg) => {
       if (arg instanceof Error) {
-        return `${arg}:${arg.name}:${arg.stack}`;
+        return arg.stack ?? `${arg.name}: ${arg.name}`;
       }
 
       if (typeof arg === 'string') {

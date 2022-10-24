@@ -6,7 +6,7 @@ import { systemLogger } from './core/logger/logger';
 async function bootstrap(): Promise<void> {
   await DbConnection.initialize();
 
-  const port = process.env['PORT'] || 3002;
+  const port = process.env['SERVER_PORT'] || 3002;
 
   app.listen(port, () => {
     systemLogger.info('Server is running on port', port);
