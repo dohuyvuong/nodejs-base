@@ -1,11 +1,11 @@
-import { DbContext } from '../core/context/db-context';
+import { AppContext } from '../core/context/app-context';
 import { ExampleEntity } from '../entities/example.entity';
 
 export class ExampleRepository {
-  constructor(private readonly _context: DbContext) {}
+  constructor(private readonly _context: AppContext) {}
 
   public async find(): Promise<ExampleEntity[]> {
-    const queryRunner = await this._context.getDbConnection().getQueryRunner();
+    const queryRunner = await this._context.connection.getQueryRunner();
     return await queryRunner.manager.getRepository(ExampleEntity).find();
   }
 }

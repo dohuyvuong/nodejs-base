@@ -1,14 +1,21 @@
-import signale from 'signale';
+import { Signale } from 'signale';
 
 import { MASK_FIELDS } from '../utils/constants';
 
-signale.config({
-  displayTimestamp: true,
-  displayDate: true,
-});
-
-class Logger {
+export class Logger {
   private static MASK_REGEX = new RegExp(MASK_FIELDS.map((field) => `(?<${field}>"${field}":".*?")`).join('|'), 'gm');
+
+  private _logger: Signale;
+
+  constructor(private _executionId: string) {
+    this._logger = new Signale({
+      config: {
+        displayTimestamp: true,
+        displayDate: true,
+      },
+      scope: this._executionId,
+    });
+  }
 
   private buildMaskReplacer() {
     return (...args: unknown[]): string => {
@@ -18,7 +25,7 @@ class Logger {
     };
   }
 
-  private tranformArgs(...args: unknown[]): string[] {
+  private transformArgs(...args: unknown[]): string[] {
     return args.map((arg) => {
       if (arg instanceof Error) {
         return `${arg}:${arg.name}:${arg.stack}`;
@@ -52,7 +59,7 @@ class Logger {
    * Use normalError if logging error instead of
    */
   info(message: unknown, ...optionalArgs: unknown[]): void {
-    signale.info(...this.tranformArgs(message, ...optionalArgs));
+    this._logger.info(...this.transformArgs(message, ...optionalArgs));
   }
 
   /**
@@ -60,19 +67,17 @@ class Logger {
    * Use normalError if logging error instead of
    */
   debug(message: unknown, ...optionalArgs: unknown[]): void {
-    signale.debug(...this.tranformArgs(message, ...optionalArgs));
+    this._logger.debug(...this.transformArgs(message, ...optionalArgs));
   }
 
   /**
    * Use when logging warning.
    */
   warn(message: string, ...optionalArgs: unknown[]): void;
-
   /**
    * Use when logging warning.
    */
   warn(...optionalArgs: unknown[]): void;
-
   warn(message?: unknown, ...optionalArgs: unknown[]): void {
     if (typeof message === 'string') {
       message = `WARNING: ${message}`;
@@ -80,7 +85,7 @@ class Logger {
       optionalArgs.unshift(message);
       message = 'WARNING:';
     }
-    signale.warn(...this.tranformArgs(message, ...optionalArgs));
+    this._logger.warn(...this.transformArgs(message, ...optionalArgs));
   }
 
   /**
@@ -88,13 +93,11 @@ class Logger {
    * Use unhandledError if the error is unhandled instead of.
    */
   normalError(message: string, ...optionalArgs: unknown[]): void;
-
   /**
    * Use when logging normal errors.
    * Use unhandledError if the error is unhandled instead of.
    */
   normalError(...optionalArgs: unknown[]): void;
-
   normalError(message?: unknown, ...optionalArgs: unknown[]): void {
     if (typeof message === 'string') {
       message = `NORMAL ERROR: ${message}`;
@@ -102,21 +105,19 @@ class Logger {
       optionalArgs.unshift(message);
       message = 'NORMAL ERROR:';
     }
-    signale.error(...this.tranformArgs(message, ...optionalArgs));
+    this._logger.error(...this.transformArgs(message, ...optionalArgs));
   }
 
   /**
-   * Only use when logging unhanled errors.
+   * Only use when logging unhandled errors.
    * Use normalError if the error is normal instead of.
    */
   unhandledError(message: string, ...optionalArgs: unknown[]): void;
-
   /**
-   * Only use when logging unhanled errors.
+   * Only use when logging unhandled errors.
    * Use normalError if the error is normal instead of.
    */
   unhandledError(...optionalArgs: unknown[]): void;
-
   unhandledError(message?: string, ...optionalArgs: unknown[]): void {
     if (typeof message === 'string') {
       message = `UNHANDLED ERROR: ${message}`;
@@ -124,8 +125,15 @@ class Logger {
       optionalArgs.unshift(message);
       message = 'UNHANDLED ERROR:';
     }
-    signale.error(...this.tranformArgs(message, ...optionalArgs));
+    this._logger.error(...this.transformArgs(message, ...optionalArgs));
+  }
+
+  /**
+   * @deprecated
+   */
+  log(level: 'error' | 'warn' | 'info' | 'log', ...optionalArgs: unknown[]): void {
+    this._logger[level]?.(...optionalArgs);
   }
 }
 
-export const logger = new Logger();
+export const systemLogger = new Logger('system');

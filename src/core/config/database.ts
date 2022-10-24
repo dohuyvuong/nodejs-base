@@ -1,6 +1,8 @@
 import path from 'path';
 
-import { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
+
+import { TypeOrmLogger } from '../logger/sql-logger';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -10,7 +12,12 @@ export const dataSourceOptions: DataSourceOptions = {
   password: 'test',
   database: 'example',
   logging: true,
+  logger: new TypeOrmLogger(),
   entities: [path.join(__dirname, '../../**/entities/**/*.entity.js')],
   subscribers: [],
-  migrations: [],
+  migrations: [path.join(__dirname, '../../../migrations/*.js')],
 };
+
+const dataSource = new DataSource(dataSourceOptions);
+
+export default dataSource;

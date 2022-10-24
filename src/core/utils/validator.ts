@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { validate, ValidationError, ValidatorOptions } from 'class-validator';
 
-import { logger } from '../logger/logger';
+import { systemLogger } from '../logger/logger';
 import { ValidationRequestError } from '../models/validation-request.error';
 
 function getMessage(errors: ValidationError[]): string {
@@ -34,7 +34,7 @@ export async function transformAndValidate<T extends object>(
     const errors = await validate(transformed, Object.assign({ whitelist: true }, validatorOptions));
 
     if (errors.length) {
-      logger.info(errors);
+      systemLogger.info(errors);
       throw new ValidationRequestError(errors, getMessage(errors));
     }
 

@@ -1,11 +1,11 @@
-import { DbContext } from '../core/context/db-context';
+import { AppContext } from '../core/context/app-context';
 import { ExampleEntity } from '../entities/example.entity';
 import { ExampleRepository } from '../repositories/example.repository';
 
 export class ExampleService {
   private readonly exampleRepository: ExampleRepository;
 
-  constructor(private readonly _context: DbContext) {
+  constructor(private readonly _context: AppContext) {
     this.exampleRepository = new ExampleRepository(this._context);
   }
 

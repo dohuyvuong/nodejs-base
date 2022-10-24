@@ -1,4 +1,4 @@
-import { logger } from '../logger/logger';
+import { systemLogger } from '../logger/logger';
 
 export function Logger() {
   return function (
@@ -15,25 +15,25 @@ export function Logger() {
 
     if (returnType.name == 'Promise') {
       descriptor.value = async function (...args: unknown[]): Promise<typeof returnType> {
-        logger.info(`${functionName} Start`);
-        logger.info(`params:`, args);
+        systemLogger.info(`${functionName} Start`);
+        systemLogger.info(`params:`, args);
 
         const result = await targetMethod.apply(this, args);
 
-        logger.info(`result: ${JSON.stringify(result)}`);
-        logger.info(`${functionName} End`);
+        systemLogger.info(`result: ${JSON.stringify(result)}`);
+        systemLogger.info(`${functionName} End`);
 
         return result;
       };
     } else {
       descriptor.value = function (...args: unknown[]): typeof returnType {
-        logger.info(`${functionName} Start`);
-        logger.info(`input:`, args);
+        systemLogger.info(`${functionName} Start`);
+        systemLogger.info(`input:`, args);
 
         const result = targetMethod.apply(this, args);
 
-        logger.info(`output: ${JSON.stringify(result)}`);
-        logger.info(`${functionName} End`);
+        systemLogger.info(`output: ${JSON.stringify(result)}`);
+        systemLogger.info(`${functionName} End`);
 
         return result;
       };

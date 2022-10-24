@@ -1,10 +1,11 @@
-import { DataSource, QueryRunner } from 'typeorm';
+import { QueryRunner } from 'typeorm';
 
-import { dataSourceOptions } from '../config/database';
-import { logger } from '../logger/logger';
+import dataSource from '../config/database';
+import { AppContext } from '../context/app-context';
+import { systemLogger } from '../logger/logger';
 
 export class DbConnection {
-  private static _connection = new DataSource(dataSourceOptions);
+  private static _connection = dataSource;
 
   private _queryRunner: QueryRunner | undefined;
   private _transactionDepth = 0;
@@ -15,16 +16,19 @@ export class DbConnection {
       if (!this._connection.isInitialized) {
         await this._connection.initialize();
       }
-      logger.info('Connected to database');
+      systemLogger.info('Connected to database');
     } catch (error) {
-      logger.unhandledError('Failed to connect to database', error);
+      systemLogger.unhandledError('Failed to connect to database', error);
       throw error;
     }
   }
 
+  constructor(private _context: AppContext) {}
+
   public async getQueryRunner(): Promise<QueryRunner> {
     if (!this._queryRunner || !this._queryRunner.isReleased) {
       this._queryRunner = DbConnection._connection.createQueryRunner();
+      this._queryRunner.logger = this._context.logger;
       await this._queryRunner.connect();
     }
 
@@ -47,7 +51,7 @@ export class DbConnection {
       // Mark this transaction depth start
       this._transactionDepth++;
 
-      // Open transaction if it is outermost transation start
+      // Open transaction if it is outermost transaction start
       if (this._transactionDepth === 1) {
         await queryRunner.startTransaction();
       }
@@ -65,7 +69,7 @@ export class DbConnection {
 
       return result;
     } catch (error) {
-      logger.normalError(error);
+      this._context.logger.normalError(error);
       // Mark this transaction depth end
       this._transactionDepth--;
 
@@ -74,7 +78,7 @@ export class DbConnection {
           await queryRunner.rollbackTransaction();
           this._rollback = true;
         } catch (error) {
-          logger.normalError(error);
+          this._context.logger.normalError(error);
         }
       }
 
